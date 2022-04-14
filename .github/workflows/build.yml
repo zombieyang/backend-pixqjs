@@ -17,7 +17,7 @@ jobs:
     - name: Prepare
       run: |
         mkdir qjs/Lib/Win64/
-        copy build64/Release/v8qjs.lib qjs/Lib/Win64/
+        copy build64/Debug/v8qjs.lib qjs/Lib/Win64/
     - uses: actions/upload-artifact@v2
       with:
         name: qjs_v8
@@ -34,7 +34,7 @@ jobs:
     - name: Prepare
       run: |
         mkdir qjs/Lib/Win32/
-        copy build32/Release/v8qjs.lib qjs/Lib/Win32/
+        copy build32/Debug/v8qjs.lib qjs/Lib/Win32/
     - uses: actions/upload-artifact@v2
       with:
         name: qjs_v8
@@ -54,7 +54,7 @@ jobs:
     - name: Prepare
       run: |
         mkdir -p qjs/Lib/iOS/
-        cp build_ios/Release-iphoneos/libv8qjs.a qjs/Lib/iOS
+        cp build_ios/Debug-iphoneos/libv8qjs.a qjs/Lib/iOS
     - uses: actions/upload-artifact@v2
       with:
         name: qjs_v8
