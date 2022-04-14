@@ -1165,6 +1165,7 @@ JSValue JS_DupModule(JSContext *ctx, JSModuleDef* v);
 
 /*-------end fuctions for v8 api---------*/
 
+int JS_SetDebugger(int enabled, const char* addr);
 #undef js_unlikely
 #undef js_force_inline
 
