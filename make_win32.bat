@@ -6,5 +6,5 @@ pause
 
 mkdir qjs\pixqjs\Lib\Win32\
 copy build32\Release\v8qjs.lib qjs\pixqjs\Lib\Win32\
-copy library\Win32\quickjs.lib qjs\pixqjs\Lib\Win32\
+xcopy library\Win32\ qjs\pixqjs\Lib\Win32\ /S
 xcopy include qjs\pixqjs\Inc /S
