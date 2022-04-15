@@ -34,3 +34,4 @@ cp library/Android/arm64-v8a/*.so qjs/pixqjs/Lib/Android/arm64-v8a/
 cp build.Android.armeabi-v7a/libv8qjs.a qjs/pixqjs/Lib/Android/armeabi-v7a/
 cp library/Android/armeabi-v7a/*.so qjs/pixqjs/Lib/Android/armeabi-v7a/
 cp build.Android.x86/libv8qjs.a qjs/pixqjs/Lib/Android/x86/
+cp -r include/. qjs/pixqjs/Inc/

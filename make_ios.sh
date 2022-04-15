@@ -7,3 +7,4 @@ cmake --build . --config Release
 cd ..
 mkdir -p qjs/pixqjs/Lib/iOS/arm64/
 cp build_ios/Release-iphoneos/libv8qjs.a qjs/pixqjs/Lib/iOS/arm64
+cp -r include/. qjs/pixqjs/Inc/
