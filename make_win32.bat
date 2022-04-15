@@ -3,3 +3,7 @@ cmake -S ..\CMakeLists.txt -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -G "Visual Studio 16
 popd
 cmake --build build32 --config Release
 pause
+
+mkdir qjs/pixqjs/Lib/Win32/
+copy build32/Release/v8qjs.lib qjs/pixqjs/Lib/Win32/
+copy library/Win32/quickjs.lib qjs/pixqjs/Lib/Win32/
