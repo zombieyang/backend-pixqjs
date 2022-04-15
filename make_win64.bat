@@ -4,6 +4,6 @@ popd
 cmake --build build64 --config Release
 pause
 
-mkdir qjs/pixqjs/Lib/Win64/
-copy build64/Release/v8qjs.lib qjs/pixqjs/Lib/Win64/
-copy library/Win64/quickjs.lib qjs/pixqjs/Lib/Win64/
+mkdir qjs\pixqjs\Lib\Win64\
+copy build64\Release\v8qjs.lib qjs\pixqjs\Lib\Win64\
+copy library\Win64\quickjs.lib qjs\pixqjs\Lib\Win64\
