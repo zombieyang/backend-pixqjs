@@ -1,9 +1,11 @@
+# Do build
 rm -rf build_osx
 mkdir -p build_osx
 cd build_osx
 cmake ..
 cmake --build . --config Release
 
+# Prepare the files
 cd ..
 mkdir -p qjs/pixqjs/Lib/macOS/
 cp build_osx/libv8qjs.a qjs/pixqjs/Lib/macOS

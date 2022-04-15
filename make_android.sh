@@ -22,10 +22,12 @@ function build() {
     # cp ${BUILD_PATH}/libquickjs.a ~/qjs/quickjs/Lib/Android/${ABI}/libquickjs.a
 }
 
+# Do build
 build android-18 armeabi-v7a arm-linux-androideabi-4.9
 build android-18 arm64-v8a  arm-linux-androideabi-clang
 build android-18 x86 x86-4.9
 
+# Prepare the files
 mkdir -p qjs/pixqjs/Lib/Android/arm64-v8a/
 mkdir -p qjs/pixqjs/Lib/Android/armeabi-v7a/
 mkdir -p qjs/pixqjs/Lib/Android/x86/
