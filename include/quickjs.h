@@ -1008,7 +1008,7 @@ static inline JSValue JS_NewCFunctionMagic(JSContext *ctx, JSCFunctionMagic *fun
                                            const char *name,
                                            int length, JSCFunctionEnum cproto, int magic)
 {
-    return JS_NewCFunction2(ctx, (JSCFunction *)func, name, length, cproto, magic);
+    return JS_NewCFunction2(ctx, (JSCFunction *)(void*)func, name, length, cproto, magic);
 }
 void JS_SetConstructor(JSContext *ctx, JSValueConst func_obj, 
                        JSValueConst proto);
@@ -1100,7 +1100,7 @@ void JS_SetValId(JSValue val, int32_t id);
 void JS_SetValHash(JSValue val, int32_t hash);
 
 typedef char* (*JS_OnBacktrace)(JSContext *ctx, char* backtrace);
-void JS_SetOnBacktraceeCallback(JS_OnBacktrace callback);
+void JS_SetOnBacktraceeCallback(JSRuntime *rt, JS_OnBacktrace callback);
 
 typedef void (*JS_OnCallCFunctionHook)(JSContext *ctx, JSValue name, int call);
 void JS_SetOnCallCFunctionHook(JS_OnCallCFunctionHook callback);
@@ -1174,6 +1174,8 @@ JSValue JS_DupModule(JSContext *ctx, JSModuleDef* v);
 
 int JS_SetDebugger(int enabled, const char* addr);
 uint8_t *JS_CompileString(const char *code, size_t len, size_t *out_len);
+int JS_EnableExtDebugInfo();
+void JS_SetEnableExtDebugInfo(int enabled);
 
 #undef js_unlikely
 #undef js_force_inline
