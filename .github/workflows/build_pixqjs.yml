@@ -3,6 +3,10 @@ name: Build
 on: 
   push:
   workflow_dispatch:
+    inputs:
+      debug:
+        type: boolean
+        required: false
 
 jobs:
 
@@ -12,8 +16,13 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build
+      if: ${{inputs.debug != 'true'}}
       run: |
         .\make_win64.bat
+    - name: Build
+      if: ${{inputs.debug == 'true'}}
+      run: |
+        .\make_win64.bat Debug
     - uses: actions/upload-artifact@v2
       with:
         name: pixqjs_bin
