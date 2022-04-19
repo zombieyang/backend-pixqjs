@@ -18,6 +18,7 @@ jobs:
     - name: Build
       if: ${{inputs.debug != 'true'}}
       run: |
+        echo ${{inputs.debug}}
         .\make_win64.bat
     - name: Build
       if: ${{inputs.debug == 'true'}}
