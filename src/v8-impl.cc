@@ -1,12 +1,12 @@
 #include "v8.h"
-#include<cstring>
+#include <cstring>
 #include <algorithm>
 
 enum
 {
     JS_ATOM_NULL_,
 #define DEF(name, str) JS_ATOM_##name,
-#include "quickjs-atom.h"
+#include "quickjs/quickjs-atom.h"
 #undef DEF
     JS_ATOM_END,
 };

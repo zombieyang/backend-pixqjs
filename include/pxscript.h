@@ -9,7 +9,7 @@
 #define PX_API __attribute__((visibility("default")))
 #endif
 
-#include "quickjs.h"
+#include "quickjs/quickjs.h"
 
 #ifdef __cplusplus
 extern "C" {
