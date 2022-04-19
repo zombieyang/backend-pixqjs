@@ -15,5 +15,6 @@ REM Prepare the files
 mkdir qjs\pixqjs\Lib\Win64\
 mkdir qjs\pixqjs\Inc
 copy build64\%DEBUGCONFIG%\v8qjs.lib qjs\pixqjs\Lib\Win64\
+xcopy build64\%DEBUGCONFIG%\v8qjs.pdb qjs\pixqjs\Lib\Win64\ /c
 xcopy library\Win64\ qjs\pixqjs\Lib\Win64\ /S
 xcopy include qjs\pixqjs\Inc /S
