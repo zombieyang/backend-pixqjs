@@ -16,12 +16,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build
-      if: ${{inputs.debug != 'true'}}
+      if: ${{github.event.inputs.debug != 'true'}}
       run: |
-        echo ${{inputs.debug}}
         .\make_win64.bat
     - name: Build
-      if: ${{inputs.debug == 'true'}}
+      if: ${{github.event.inputs.debug == 'true'}}
       run: |
         .\make_win64.bat Debug
     - uses: actions/upload-artifact@v2
