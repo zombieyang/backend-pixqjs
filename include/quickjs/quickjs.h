@@ -899,8 +899,6 @@ typedef struct JSModuleDef JSModuleDef;
 JSValue js_get_module_ns(JSContext *ctx, JSModuleDef *m);
 int js_resolve_module(JSContext *ctx, JSModuleDef *m);
 JSModuleDef *js_find_loaded_module(JSContext *ctx, JSAtom name);
-JSValue js_map_forEach(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv, int magic);
-JSValue js_map_delete(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv, int magic);
 
 /* return the module specifier (allocated with js_malloc()) or NULL if
    exception */
@@ -1008,7 +1006,7 @@ static inline JSValue JS_NewCFunctionMagic(JSContext *ctx, JSCFunctionMagic *fun
                                            const char *name,
                                            int length, JSCFunctionEnum cproto, int magic)
 {
-    return JS_NewCFunction2(ctx, (JSCFunction *)(void*)func, name, length, cproto, magic);
+    return JS_NewCFunction2(ctx, (JSCFunction *)func, name, length, cproto, magic);
 }
 void JS_SetConstructor(JSContext *ctx, JSValueConst func_obj, 
                        JSValueConst proto);
@@ -1058,11 +1056,11 @@ typedef struct JSCFunctionListEntry {
 
 /* Note: c++ does not like nested designators */
 #define JS_CFUNC_DEF(name, length, func1) { name, JS_PROP_WRITABLE | JS_PROP_CONFIGURABLE, JS_DEF_CFUNC, 0, .u = { .func = { length, JS_CFUNC_generic, { .generic = func1 } } } }
-#define JS_CFUNC_MAGIC_DEF(name, length, func1, magic) { name, JS_PROP_WRITABLE | JS_PROP_CONFIGURABLE, JS_DEF_CFUNC, magic, { .func = { length, JS_CFUNC_generic_magic, { .generic_magic = func1 } } } }
+#define JS_CFUNC_MAGIC_DEF(name, length, func1, magic) { name, JS_PROP_WRITABLE | JS_PROP_CONFIGURABLE, JS_DEF_CFUNC, magic, .u = { .func = { length, JS_CFUNC_generic_magic, { .generic_magic = func1 } } } }
 #define JS_CFUNC_SPECIAL_DEF(name, length, cproto, func1) { name, JS_PROP_WRITABLE | JS_PROP_CONFIGURABLE, JS_DEF_CFUNC, 0, .u = { .func = { length, JS_CFUNC_ ## cproto, { .cproto = func1 } } } }
 #define JS_ITERATOR_NEXT_DEF(name, length, func1, magic) { name, JS_PROP_WRITABLE | JS_PROP_CONFIGURABLE, JS_DEF_CFUNC, magic, .u = { .func = { length, JS_CFUNC_iterator_next, { .iterator_next = func1 } } } }
 #define JS_CGETSET_DEF(name, fgetter, fsetter) { name, JS_PROP_CONFIGURABLE, JS_DEF_CGETSET, 0, .u = { .getset = { .get = { .getter = fgetter }, .set = { .setter = fsetter } } } }
-#define JS_CGETSET_MAGIC_DEF(name, fgetter, fsetter, magic) { name, JS_PROP_CONFIGURABLE, JS_DEF_CGETSET_MAGIC, magic, { .getset = { .get = { .getter_magic = fgetter }, .set = { .setter_magic = fsetter } } } }
+#define JS_CGETSET_MAGIC_DEF(name, fgetter, fsetter, magic) { name, JS_PROP_CONFIGURABLE, JS_DEF_CGETSET_MAGIC, magic, .u = { .getset = { .get = { .getter_magic = fgetter }, .set = { .setter_magic = fsetter } } } }
 #define JS_PROP_STRING_DEF(name, cstr, prop_flags) { name, prop_flags, JS_DEF_PROP_STRING, 0, .u = { .str = cstr } }
 #define JS_PROP_INT32_DEF(name, val, prop_flags) { name, prop_flags, JS_DEF_PROP_INT32, 0, .u = { .i32 = val } }
 #define JS_PROP_INT64_DEF(name, val, prop_flags) { name, prop_flags, JS_DEF_PROP_INT64, 0, .u = { .i64 = val } }
@@ -1100,22 +1098,8 @@ void JS_SetValId(JSValue val, int32_t id);
 void JS_SetValHash(JSValue val, int32_t hash);
 
 typedef char* (*JS_OnBacktrace)(JSContext *ctx, char* backtrace);
-void JS_SetOnBacktraceeCallback(JSRuntime *rt, JS_OnBacktrace callback);
+void JS_SetOnBacktraceeCallback(JS_OnBacktrace callback);
 
-typedef void (*JS_OnCallCFunctionHook)(JSContext *ctx, JSValue name, int call);
-void JS_SetOnCallCFunctionHook(JS_OnCallCFunctionHook callback);
-
-#define Q4CC(ch0, ch1, ch2, ch3)                        \
-	((unsigned int) (unsigned char) (ch0) | ((unsigned int) (unsigned char) (ch1) << 8) | \
-	 ((unsigned int) (unsigned char) (ch2) << 16) | ((unsigned int) (unsigned char) (ch3) << 24))
-
-#define TAG_PIX1  (Q4CC('P', 'I', 'X', '1'))
-#define TAG_PIX2  (Q4CC('P', 'I', 'X', '2'))
-
-inline JS_BOOL JS_IsCompiled(const void *buf) {
-  unsigned int tag = *(unsigned  int*) buf;
-  return tag == TAG_PIX1 || tag == TAG_PIX2;
-}
 JSValue JS_EvalBuffer(JSContext* ctx, const char* name, const uint8_t* buff, size_t len);
 JSValue JS_LoadBuffer(JSContext* ctx, const char* name, const uint8_t* buff, size_t len);
 void JS_SetFunctionName(JSContext* ctx, JSValue func_obj, const char* name);
@@ -1129,10 +1113,10 @@ typedef struct JSDebug
 {
   void* userdata;
   int event; /* JS_HOOK_XXX */
-  const char *name;
+  JSAtom name;
   const char *namewhat;	/* (n) 'global', 'local', 'field', 'method' */
   const char *what;	/* (S) 'JS', 'C', 'main', 'tail' */
-  const char *source;	/* (S) */
+  JSAtom source;	/* (S) */
   int currentline;	/* (l) */
 }JSDebug;
 typedef void (*JS_Hook)(JSContext* ctx, JSDebug* ar);
@@ -1173,9 +1157,6 @@ JSValue JS_DupModule(JSContext *ctx, JSModuleDef* v);
 /*-------end fuctions for v8 api---------*/
 
 int JS_SetDebugger(int enabled, const char* addr);
-uint8_t *JS_CompileString(const char *code, size_t len, size_t *out_len);
-int JS_EnableExtDebugInfo();
-void JS_SetEnableExtDebugInfo(int enabled);
 
 #undef js_unlikely
 #undef js_force_inline

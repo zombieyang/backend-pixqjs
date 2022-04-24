@@ -77,7 +77,7 @@ Isolate* Promise::GetIsolate() {
 }
 
 void V8FinalizerWrap(JSRuntime *rt, JSValue val) {
-    Isolate* isolate = (Isolate*)pxsRuntimeOpaque(rt, (void*)"PUERTS", PXS_OPAQUE_GET);
+    Isolate* isolate = (Isolate*)JS_GetRuntimeOpaque(rt);
     v8::Isolate::Scope Isolatescope(isolate);
     ObjectUserData* objectUdata = reinterpret_cast<ObjectUserData*>(JS_GetOpaque(val, isolate->class_id_));
     if (objectUdata) {
@@ -95,7 +95,7 @@ Isolate::Isolate() : Isolate(nullptr) {
 Isolate::Isolate(void* external_context) : current_context_(nullptr) {
     is_external_runtime_ = external_context != nullptr;
     runtime_ = is_external_runtime_ ? JS_GetRuntime((JSContext *)external_context) : JS_NewRuntime();
-    pxsRuntimeOpaque(runtime_, (void*)"PUERTS", this);
+    JS_SetRuntimeOpaque(runtime_, this);
     literal_values_[kUndefinedValueIndex] = JS_Undefined();
     literal_values_[kNullValueIndex] = JS_Null();
     literal_values_[kTrueValueIndex] = JS_True();
