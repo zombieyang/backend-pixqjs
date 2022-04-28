@@ -3,6 +3,10 @@ name: Build
 on: 
   push:
   workflow_dispatch:
+    inputs:
+      debug:
+        type: boolean
+        required: false
 
 jobs:
 
@@ -12,13 +16,13 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build
+      if: ${{github.event.inputs.debug != 'true'}}
       run: |
         .\make_win64.bat
-    - name: Prepare
+    - name: Build
+      if: ${{github.event.inputs.debug == 'true'}}
       run: |
-        mkdir qjs/pixqjs/Lib/Win64/
-        copy build64/Release/v8qjs.lib qjs/pixqjs/Lib/Win64/
-        copy library/Win64/quickjs.lib qjs/pixqjs/Lib/Win64/
+        .\make_win64.bat Debug
     - uses: actions/upload-artifact@v2
       with:
         name: pixqjs_bin
@@ -32,11 +36,6 @@ jobs:
     - name: Build
       run: |
         .\make_win32.bat
-    - name: Prepare
-      run: |
-        mkdir qjs/pixqjs/Lib/Win32/
-        copy build32/Release/v8qjs.lib qjs/pixqjs/Lib/Win32/
-        copy library/Win32/quickjs.lib qjs/pixqjs/Lib/Win32/
     - uses: actions/upload-artifact@v2
       with:
         name: pixqjs_bin
@@ -53,10 +52,6 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE
         sh ./make_ios.sh
-    - name: Prepare
-      run: |
-        mkdir -p qjs/pixqjs/Lib/iOS/arm64/
-        cp build_ios/Release-iphoneos/libv8qjs.a qjs/pixqjs/Lib/iOS/arm64
     - uses: actions/upload-artifact@v2
       with:
         name: pixqjs_bin
@@ -73,13 +68,6 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE
         sh ./make_osx.sh
-    - name: Prepare
-      run: |
-        mkdir -p qjs/pixqjs/Lib/macOS/
-        cp build_osx/libv8qjs.a qjs/pixqjs/Lib/macOS
-        cp library/macOS/*.dylib qjs/pixqjs/Lib/macOS/
-        mkdir -p qjs/pixqjs/Inc/
-        cp -r include/* qjs/pixqjs/Inc/
     - uses: actions/upload-artifact@v2
       with:
         name: pixqjs_bin
@@ -101,16 +89,6 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE
         ./make_android.sh
-    - name: Prepare
-      run: |
-        mkdir -p qjs/pixqjs/Lib/Android/arm64-v8a/
-        mkdir -p qjs/pixqjs/Lib/Android/armeabi-v7a/
-        mkdir -p qjs/pixqjs/Lib/Android/x86/
-        cp build.Android.arm64-v8a/libv8qjs.a qjs/pixqjs/Lib/Android/arm64-v8a/
-        cp library/Android/arm64-v8a/*.so qjs/pixqjs/Lib/Android/arm64-v8a/
-        cp build.Android.armeabi-v7a/libv8qjs.a qjs/pixqjs/Lib/Android/armeabi-v7a/
-        cp library/Android/armeabi-v7a/*.so qjs/pixqjs/Lib/Android/armeabi-v7a/
-        cp build.Android.x86/libv8qjs.a qjs/pixqjs/Lib/Android/x86/
     - uses: actions/upload-artifact@v2
       with:
         name: pixqjs_bin
